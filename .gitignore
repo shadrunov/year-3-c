@@ -1,0 +1,3 @@
+.vscode
+classes/output/*
+!classes/output/.gitkeep
