@@ -69,30 +69,41 @@
 }
 
 
-% Нумерация рисунков
-% \counterwithin{figure}{section}
-
-% Нумерация таблиц
-% \counterwithin{table}{section}
-
-% \counterwithin{table}{section}
-
-% % шрифт для листингов с лигатурами
-% \setmonofont{FiraCode-Regular.otf}[
-% 	SizeFeatures={Size=10},
-% 	Path = Settings/,
-% 	Contextuals=Alternate
-% ]
-
-
 \usepackage[section]{placeins}
-% \usepackage[subsection]{placeins}
 \captionsetup[figure]{labelformat=simple, labelsep=endash}
-% \usepackage[singlelinecheck=false]{caption}
 \captionsetup[table]{labelsep=endash, justification=raggedright, singlelinecheck=off}
-% настройка подсветки кода и окружения для листингов
-%\usemintedstyle{colorful} % делает подсветку для кода
-% \newenvironment{code}{\captionsetup{type=listing}}{}
+\captionsetup[lstlisting]{labelformat=simple, labelsep=endash, font=sf}
 
 
 % Посмотреть ещё стили можно тут https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted
+
+\usepackage{titlesec}
+\titleformat{\section}{\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\bfseries}{\thesubsubsection}{1em}{}
+
+
+
+\renewcommand{\labelitemi}{-}
+
+
+% \usepackage{fancyhdr} % this goes in the preamble
+
+% \pagestyle{fancy}
+% \fancyhf{} % remove everything     
+% \fancyhead{} % clear all header fields  
+
+% % the next lines go in the body (i.e., between \begin{document} and \end{document}
+% % \pagestyle{fancy}
+% % \renewcommand{\headrule}{} % eliminate the default(?) ruled line in the header
+% \fancypagestyle{plain}{
+%     \fancyhead{}
+%     \fancyfoot[C]{\sffamily\thepage}
+% }
+
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ps@plain}{\thepage}{\sffamily\thepage}{}{}
+\makeatother
+\pagestyle{plain} % execute this command to load the new settings

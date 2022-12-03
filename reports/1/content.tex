@@ -9,14 +9,16 @@
 \subsubsection{main}
 Работа программы начианется с функции \texttt{main}. Функция принимает на вход аргументы из командной стоки: флаги, выбирающие режим работы программы, и путь к файлу. Допустимые флаги:
 
+
 \begin{itemize}
     \item \verb|-e| используется для включения режима кодирования;
     \item \verb|-d| используется для включения режима декодирования;
     \item флаг \verb|-t| позволяет использовать текстовый файл для хранения структуры.
 \end{itemize}
 
-Примеры запуска программы:
-\begin{lstlisting}[language=bash, numbers=none]
+Примеры запуска программы приведены в листинге 1.
+
+\begin{lstlisting}[language=bash, numbers=none, caption={Примеры запуска программы}]
 ./hw1 -e file.bin  # encrypt to file.bin
 ./hw1 -t file.bin  # read from file.bin
 ./hw1 -et file.txt  # use text file file.txt
