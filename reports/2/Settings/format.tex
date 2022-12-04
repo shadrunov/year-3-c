@@ -1,0 +1,80 @@
+%%%%%%%%%%%%%%%%% Оформление ГОСТА%%%%%%%%%%%%%%%%%
+
+% Все параметры указаны в ГОСТЕ на 2021, а именно:
+
+\setdefaultlanguage[spelling=modern]{russian}
+\setotherlanguage{english}
+
+\usepackage{fontspec}
+
+\setmainfont{CMU Serif}
+\setromanfont{CMU Serif}
+\setsansfont{CMU Serif}
+% \setmonofont{CMU Typewriter Text}
+\setmonofont{Courier New}
+
+% \newfontfamily{\cyrillicfont}{CMU Serif} 
+% \newfontfamily{\cyrillicfontrm}{CMU Serif}
+\newfontfamily{\cyrillicfonttt}{Courier New Bold}
+% \newfontfamily{\cyrillicfontsf}{CMU Serif}
+
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+
+\newenvironment{Times}
+{
+    \setmainfont{Times New Roman}
+}
+{
+    \setmainfont{CMU Serif}
+}
+
+
+
+% шрифт для URL-ссылок
+\urlstyle{same}
+
+% Междустрочный интервал должен быть равен 1.5 сантиметра.
+\linespread{1.5} % междустрочный интервал
+
+% Каждая новая строка должна начинаться с отступа равного 1.25 сантиметра.
+\setlength{\parindent}{1.25cm} % отступ для абзаца
+
+% Путь до папки с изображениями
+\graphicspath{ {./Images/} }
+
+% Внесение titlepage в учёт счётчика страниц
+\makeatletter
+\renewenvironment{titlepage} {
+    \thispagestyle{empty}
+}
+
+
+% Цвет гиперссылок и цитирования
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=blue,
+    citecolor = black,
+    urlcolor=blue,
+}
+
+\usepackage[section]{placeins}
+\captionsetup[figure]{labelformat=simple, labelsep=endash}
+\captionsetup[table]{labelsep=endash, justification=raggedright, singlelinecheck=off}
+\captionsetup[lstlisting]{labelformat=simple, labelsep=endash, font=sf}
+
+
+\usepackage{titlesec}
+\titleformat{\section}{\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\bfseries}{\thesubsubsection}{1em}{}
+
+\renewcommand{\labelitemi}{-}
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ps@plain}{\thepage}{\sffamily\thepage}{}{}
+\makeatother
+\pagestyle{plain} % execute this command to load the new settings

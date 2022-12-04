@@ -1,7 +1,7 @@
 .vscode
 classes/output/*
 !classes/output/.gitkeep
-
+*.otf
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
