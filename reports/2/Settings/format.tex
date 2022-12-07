@@ -1,7 +1,3 @@
-%%%%%%%%%%%%%%%%% Оформление ГОСТА%%%%%%%%%%%%%%%%%
-
-% Все параметры указаны в ГОСТЕ на 2021, а именно:
-
 \setdefaultlanguage[spelling=modern]{russian}
 \setotherlanguage{english}
 
@@ -22,14 +18,7 @@
 \setmainfont[Ligatures=TeX]{CMU Serif}
 
 \newenvironment{Times}
-{
-    \setmainfont{Times New Roman}
-}
-{
-    \setmainfont{CMU Serif}
-}
-
-
+{\setmainfont{Times New Roman}}{\setmainfont{CMU Serif}}
 
 % шрифт для URL-ссылок
 \urlstyle{same}
@@ -45,36 +34,36 @@
 
 % Внесение titlepage в учёт счётчика страниц
 \makeatletter
-\renewenvironment{titlepage} {
-    \thispagestyle{empty}
-}
-
+\renewenvironment{titlepage}{\thispagestyle{empty}}
 
 % Цвет гиперссылок и цитирования
 \usepackage{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=black,
-    filecolor=blue,
-    citecolor = black,
-    urlcolor=blue,
-}
+\hypersetup{colorlinks=true, linkcolor=black, filecolor=blue, citecolor=black, urlcolor=blue}
 
 \usepackage[section]{placeins}
 \captionsetup[figure]{labelformat=simple, labelsep=endash}
 \captionsetup[table]{labelsep=endash, justification=raggedright, singlelinecheck=off}
 \captionsetup[lstlisting]{labelformat=simple, labelsep=endash, font=sf}
 
-
+% basic font size for headings 
 \usepackage{titlesec}
 \titleformat{\section}{\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}{\bfseries}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}{\bfseries}{\thesubsubsection}{1em}{}
 
-\renewcommand{\labelitemi}{-}
+% spacing before and after paragraphs 
+\titlespacing\section{0pt}{0pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{0pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{0pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 
+% page number font sans serif
 \usepackage{etoolbox}
 \makeatletter
 \patchcmd{\ps@plain}{\thepage}{\sffamily\thepage}{}{}
 \makeatother
-\pagestyle{plain} % execute this command to load the new settings
+\pagestyle{plain}
+
+% indentation for items
+\usepackage{enumitem}
+\setlist{align=right,itemindent=1.25cm,leftmargin=0pt,nolistsep}
+\renewcommand{\labelitemi}{-}

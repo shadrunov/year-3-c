@@ -6,7 +6,7 @@
 
 section .data
 
-array: DW 30, 0, 0, 0, 1, 2, 33, 33, 33, 33  ; Array of 10 Define Words  
+array: DW 1, 2, 3, 4, 5, 6, 7, 8, 9, 11  ; Array of 10 Define Words  
 result: DW 0x0  ; DW - 2 bytes
 
 
