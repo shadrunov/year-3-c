@@ -72,7 +72,7 @@ int main()
     {
         // new iteration
         printf("\nCurrent state: %d\n", cur_state);
-        puts("Enter coin (1, 2, 5 or 10)?");
+        printf("Enter coin (1, 2, 5 or 10)? \n");
         scanf("%d", &input);
 
         if (input != 1 && input != 2 && input != 5 && input != 10)
@@ -92,7 +92,7 @@ int main()
             printf(" - 4 rubles: %d \n", fsm[i].change[2]);
             printf(" - 5 rubles: %d \n\n", fsm[i].change[3]);
         }
-        
+
         // go to next state
         printf("going to state %d \n", fsm[i].next_state);
         cur_state = fsm[i].next_state;
