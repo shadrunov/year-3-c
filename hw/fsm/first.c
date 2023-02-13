@@ -35,7 +35,7 @@ void create_table(row *pointer)
     pointer[15] = (struct row){3, 10, 0, {0, 0, 1, 0}};
     pointer[16] = (struct row){4, 1, 5, {0, 0, 0, 0}};
     pointer[17] = (struct row){4, 2, 6, {0, 0, 0, 0}};
-    pointer[18] = (struct row){4, 5, 9, {0, 0, 0, 0}};
+    pointer[18] = (struct row){4, 5, 0, {0, 0, 0, 0}};
     pointer[19] = (struct row){4, 10, 0, {0, 0, 0, 1}};
     pointer[20] = (struct row){5, 1, 6, {0, 0, 0, 0}};
     pointer[21] = (struct row){5, 2, 7, {0, 0, 0, 0}};
@@ -46,7 +46,7 @@ void create_table(row *pointer)
     pointer[26] = (struct row){6, 5, 0, {0, 1, 0, 0}};
     pointer[27] = (struct row){6, 10, 0, {0, 1, 0, 1}};
     pointer[28] = (struct row){7, 1, 8, {0, 0, 0, 0}};
-    pointer[29] = (struct row){7, 2, 9, {1, 0, 0, 0}};
+    pointer[29] = (struct row){7, 2, 0, {1, 0, 0, 0}};
     pointer[30] = (struct row){7, 5, 0, {1, 1, 0, 0}};
     pointer[31] = (struct row){7, 10, 0, {1, 1, 0, 1}};
     pointer[32] = (struct row){8, 1, 0, {0, 0, 0, 0}};
