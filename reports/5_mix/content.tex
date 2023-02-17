@@ -1,0 +1,410 @@
+\section{Цель работы}
+Написать программу, в которой создается одномерный числовой массив. После заполнения значениями (случайными числами) массива в нем нужно выполнить циклическую перестановку элементов. Количество позиций для циклической перестановки вводится пользователем с клавиатуры.
+
+
+
+\section{Ход работы}
+
+\subsection{Автомат с одним видом товара}
+
+Реализуем алгоритм работы автомата с одним видом товара — напитком за \textbf{9 рублей}.
+\begin{itemize}
+    \item Начальное состояние — 0. В автомате нет денег. Автомат ожидает внесения монет.
+    \item Вносится монета — 1, 2, 5 или 10 рублей. В зависимости от внесённой суммы автомат переходит в следующее состояние, определяемое по таблице переходов (Таблица 1).
+    \item В случае, если сумма денег в автомате больше или равна 9 рублей, автомат выдаёт напиток и сдачу и переходит в состояние 0.
+    \item В случае, если сумма денег меньше 9, ожидается следующее внесение монеты.
+\end{itemize}
+
+Таблица переходов построена по следующему принципу: в первой колонке указано текущее состояние (количество рублей в автомате), во второй колонке — монета, полученная автоматом, в третьей колонке — следующее состояние. В следующих четырёх колонках указан выходной алфавит автомата. Если в колонке стоит единица, то такую сдачу следует выдать.
+
+Таблица переходов представляет собой таблицу переходов для данного конечного автомата.
+
+\begingroup
+\renewcommand\arraystretch{0.7}
+\begin{longtable}[c]{|c|c|c|c|c|c|c|}
+\caption{Таблица переходов для автомата с одним видом товаров}
+\\
+\hline
+State & Insert & Nextstate & Change 1 & Change 2 & Change 2 2 & Change 5 \\ \hline
+\endfirsthead
+\endhead
+0     & 1      & 1         & 0        & 0        & 0          & 0        \\ \hline
+0     & 2      & 2         & 0        & 0        & 0          & 0        \\ \hline
+0     & 5      & 5         & 0        & 0        & 0          & 0        \\ \hline
+0     & 10     & 0         & 1        & 0        & 0          & 0        \\ \hline
+1     & 1      & 2         & 0        & 0        & 0          & 0        \\ \hline
+1     & 2      & 3         & 0        & 0        & 0          & 0        \\ \hline
+1     & 5      & 6         & 0        & 0        & 0          & 0        \\ \hline
+1     & 10     & 0         & 0        & 1        & 0          & 0        \\ \hline
+2     & 1      & 3         & 0        & 0        & 0          & 0        \\ \hline
+2     & 2      & 4         & 0        & 0        & 0          & 0        \\ \hline
+2     & 5      & 7         & 0        & 0        & 0          & 0        \\ \hline
+2     & 10     & 0         & 1        & 1        & 0          & 0        \\ \hline
+3     & 1      & 4         & 0        & 0        & 0          & 0        \\ \hline
+3     & 2      & 5         & 0        & 0        & 0          & 0        \\ \hline
+3     & 5      & 8         & 0        & 0        & 0          & 0        \\ \hline
+3     & 10     & 0         & 0        & 0        & 1          & 0        \\ \hline
+4     & 1      & 5         & 0        & 0        & 0          & 0        \\ \hline
+4     & 2      & 6         & 0        & 0        & 0          & 0        \\ \hline
+4     & 5      & 0         & 0        & 0        & 0          & 0        \\ \hline
+4     & 10     & 0         & 0        & 0        & 0          & 1        \\ \hline
+5     & 1      & 6         & 0        & 0        & 0          & 0        \\ \hline
+5     & 2      & 7         & 0        & 0        & 0          & 0        \\ \hline
+5     & 5      & 0         & 1        & 0        & 0          & 0        \\ \hline
+5     & 10     & 0         & 1        & 0        & 0          & 1        \\ \hline
+6     & 1      & 7         & 0        & 0        & 0          & 0        \\ \hline
+6     & 2      & 8         & 0        & 0        & 0          & 0        \\ \hline
+6     & 5      & 0         & 0        & 1        & 0          & 0        \\ \hline
+6     & 10     & 0         & 0        & 1        & 0          & 1        \\ \hline
+7     & 1      & 8         & 0        & 0        & 0          & 0        \\ \hline
+7     & 2      & 0         & 1        & 0        & 0          & 0        \\ \hline
+7     & 5      & 0         & 1        & 1        & 0          & 0        \\ \hline
+7     & 10     & 0         & 1        & 1        & 0          & 1        \\ \hline
+8     & 1      & 0         & 0        & 0        & 0          & 0        \\ \hline
+8     & 2      & 0         & 1        & 0        & 0          & 0        \\ \hline
+8     & 5      & 0         & 0        & 0        & 1          & 0        \\ \hline
+8     & 10     & 0         & 0        & 0        & 1          & 1        \\ \hline
+\end{longtable}
+\endgroup
+\FloatBarrier
+
+В листинге 1 приведена реализация данного алгоритма с помощью таблицы переходов.
+
+\begin{lstlisting}[language=c, caption={Реализация первого конечного автомата}]
+#include <stdio.h>
+#include <stdlib.h>
+/*
+    * single row of FSM:
+    * contains current state, input (a coin),
+    * next state and output (the change)
+    */
+typedef struct row
+{
+    int state;      // states from 0 to 8
+    int insert;     // an inserted coin (1, 2, 5, 10)
+    int next_state; // state after coin
+    int change[4];  // should a machine return 1, 2, 2x2 or 5 coin of change
+} row;
+// manually add rows to table
+void create_table(row *pointer)
+{
+    pointer[0] = (struct row){0, 1, 1, {0, 0, 0, 0}};
+    pointer[1] = (struct row){0, 2, 2, {0, 0, 0, 0}};
+    pointer[2] = (struct row){0, 5, 5, {0, 0, 0, 0}};
+    pointer[3] = (struct row){0, 10, 0, {1, 0, 0, 0}};
+    pointer[4] = (struct row){1, 1, 2, {0, 0, 0, 0}};
+    pointer[5] = (struct row){1, 2, 3, {0, 0, 0, 0}};
+    pointer[6] = (struct row){1, 5, 6, {0, 0, 0, 0}};
+    pointer[7] = (struct row){1, 10, 0, {0, 1, 0, 0}};
+    pointer[8] = (struct row){2, 1, 3, {0, 0, 0, 0}};
+    pointer[9] = (struct row){2, 2, 4, {0, 0, 0, 0}};
+    pointer[10] = (struct row){2, 5, 7, {0, 0, 0, 0}};
+    pointer[11] = (struct row){2, 10, 0, {1, 1, 0, 0}};
+    pointer[12] = (struct row){3, 1, 4, {0, 0, 0, 0}};
+    pointer[13] = (struct row){3, 2, 5, {0, 0, 0, 0}};
+    pointer[14] = (struct row){3, 5, 8, {0, 0, 0, 0}};
+    pointer[15] = (struct row){3, 10, 0, {0, 0, 1, 0}};
+    pointer[16] = (struct row){4, 1, 5, {0, 0, 0, 0}};
+    pointer[17] = (struct row){4, 2, 6, {0, 0, 0, 0}};
+    pointer[18] = (struct row){4, 5, 0, {0, 0, 0, 0}};
+    pointer[19] = (struct row){4, 10, 0, {0, 0, 0, 1}};
+    pointer[20] = (struct row){5, 1, 6, {0, 0, 0, 0}};
+    pointer[21] = (struct row){5, 2, 7, {0, 0, 0, 0}};
+    pointer[22] = (struct row){5, 5, 0, {1, 0, 0, 0}};
+    pointer[23] = (struct row){5, 10, 0, {1, 0, 0, 1}};
+    pointer[24] = (struct row){6, 1, 7, {0, 0, 0, 0}};
+    pointer[25] = (struct row){6, 2, 8, {0, 0, 0, 0}};
+    pointer[26] = (struct row){6, 5, 0, {0, 1, 0, 0}};
+    pointer[27] = (struct row){6, 10, 0, {0, 1, 0, 1}};
+    pointer[28] = (struct row){7, 1, 8, {0, 0, 0, 0}};
+    pointer[29] = (struct row){7, 2, 0, {1, 0, 0, 0}};
+    pointer[30] = (struct row){7, 5, 0, {1, 1, 0, 0}};
+    pointer[31] = (struct row){7, 10, 0, {1, 1, 0, 1}};
+    pointer[32] = (struct row){8, 1, 0, {0, 0, 0, 0}};
+    pointer[33] = (struct row){8, 2, 0, {1, 0, 0, 0}};
+    pointer[34] = (struct row){8, 5, 0, {0, 0, 1, 0}};
+    pointer[35] = (struct row){8, 10, 0, {0, 0, 1, 1}};
+}
+
+int main()
+{
+    // init FSM with precalculated values
+    int states_num = 36;
+    row *fsm = malloc(sizeof(row) * states_num);
+    create_table(fsm);
+
+    // start a machine
+    printf("Price is 9 \n\n");
+
+    int cur_state = 0;
+    int input;
+
+    while (1)
+    {
+        // new iteration
+        printf("\nCurrent state: %d\n", cur_state);
+        printf("Enter coin (1, 2, 5 or 10)? \n");
+        scanf("%d", &input);
+
+        if (input != 1 && input != 2 && input != 5 && input != 10)
+            continue;  // wrong coin
+
+        int i = 0;
+        while (fsm[i].state != cur_state || fsm[i].insert != input)
+            i++;  // find current row in table
+
+        if (fsm[i].next_state == 0)  // the machine returned to S0
+        {
+            // so we give a drink!
+            printf("Here's your drink! \n");
+            printf("And change: \n");
+            printf(" - 1 ruble:  %d \n", fsm[i].change[0]);
+            printf(" - 2 rubles: %d \n", fsm[i].change[1]);
+            printf(" - 4 rubles: %d \n", fsm[i].change[2]);
+            printf(" - 5 rubles: %d \n\n", fsm[i].change[3]);
+        }
+        // go to next state
+        printf("going to state %d \n", fsm[i].next_state);
+        cur_state = fsm[i].next_state;
+    }
+    return 0;
+}
+\end{lstlisting}
+
+На рисунке 1 приведён граф переходов для данной реализации автомата. На рисунке 2 показана работа программы.
+
+\image{1.png}{Граф переходов первого автомата}{1}
+\FloatBarrier
+
+\image{3.png}{Работа конечного автомата}{0.63}
+\FloatBarrier
+
+
+\subsection{Автомат Мили}
+Модифицируем автомат для обработки двух видов товаров. Первый товар, как и раньше, стоит 9 рублей, а второй — 3 рубля.
+Алгоритм:
+\begin{itemize}
+    \item Первый шаг алгоритма — выбрать напиток. Автомат находится в состоянии 0, затем в зависимости от выбранного товара — 1 или 2 — автомат переходит в состояние 10 или 20 соответственно.
+    \item Далее работа автомата повторяет автомат из первого пункта, только состояния кодируются двумя цифрами, первая из которых обозначает номер напитка.
+    \item После выдачи напитка и сдачи автомат возвращается в состояние 0.
+\end{itemize}
+
+
+В листинге 2 приведена реализация данного алгоритма с помощью таблицы переходов.
+
+\begin{lstlisting}[language=c, caption={Фрагмент функции main}]
+#include <stdio.h>
+#include <stdlib.h>
+
+/*
+    * single row of FSM:
+    * contains current state, input (a coin),
+    * next state and output (the change)
+    */
+typedef struct row
+{
+    int state;      // states from 0 to 8
+    int insert;     // an inserted coin (1, 2, 5, 10)
+    int next_state; // state after coin
+    int change[4];  // should a machine return 1, 2, 2x2 or 5 coin of change
+    int item;       // an item to give (1 or 2)
+} row;
+
+// manually add rows to table
+void create_table(row *pointer)
+{
+    pointer[0] = (struct row){0, 1, 10, {0, 0, 0, 0}, 0};
+    pointer[1] = (struct row){0, 2, 20, {0, 0, 0, 0}, 0};
+    pointer[2] = (struct row){10, 1, 11, {0, 0, 0, 0}, 0};
+    pointer[3] = (struct row){10, 2, 12, {0, 0, 0, 0}, 0};
+    pointer[4] = (struct row){10, 5, 15, {0, 0, 0, 0}, 0};
+    pointer[5] = (struct row){10, 10, 0, {1, 0, 0, 0}, 1};
+    pointer[6] = (struct row){11, 1, 12, {0, 0, 0, 0}, 0};
+    pointer[7] = (struct row){11, 2, 13, {0, 0, 0, 0}, 0};
+    pointer[8] = (struct row){11, 5, 16, {0, 0, 0, 0}, 0};
+    pointer[9] = (struct row){11, 10, 0, {0, 1, 0, 0}, 1};
+    pointer[10] = (struct row){12, 1, 13, {0, 0, 0, 0}, 0};
+    pointer[11] = (struct row){12, 2, 14, {0, 0, 0, 0}, 0};
+    pointer[12] = (struct row){12, 5, 17, {0, 0, 0, 0}, 0};
+    pointer[13] = (struct row){12, 10, 0, {1, 1, 0, 0}, 1};
+    pointer[14] = (struct row){13, 1, 14, {0, 0, 0, 0}, 0};
+    pointer[15] = (struct row){13, 2, 15, {0, 0, 0, 0}, 0};
+    pointer[16] = (struct row){13, 5, 18, {0, 0, 0, 0}, 0};
+    pointer[17] = (struct row){13, 10, 0, {0, 0, 1, 0}, 1};
+    pointer[18] = (struct row){14, 1, 15, {0, 0, 0, 0}, 0};
+    pointer[19] = (struct row){14, 2, 16, {0, 0, 0, 0}, 0};
+    pointer[20] = (struct row){14, 5, 0, {0, 0, 0, 0}, 1};
+    pointer[21] = (struct row){14, 10, 14, {0, 0, 0, 1}, 0};
+    pointer[22] = (struct row){15, 1, 16, {0, 0, 0, 0}, 0};
+    pointer[23] = (struct row){15, 2, 17, {0, 0, 0, 0}, 0};
+    pointer[24] = (struct row){15, 5, 0, {1, 0, 0, 0}, 1};
+    pointer[25] = (struct row){15, 10, 0, {1, 0, 0, 1}, 1};
+    pointer[26] = (struct row){16, 1, 17, {0, 0, 0, 0}, 0};
+    pointer[27] = (struct row){16, 2, 18, {0, 0, 0, 0}, 0};
+    pointer[28] = (struct row){16, 5, 0, {0, 1, 0, 0}, 1};
+    pointer[29] = (struct row){16, 10, 0, {0, 1, 0, 1}, 1};
+    pointer[30] = (struct row){17, 1, 18, {0, 0, 0, 0}, 0};
+    pointer[31] = (struct row){17, 2, 0, {1, 0, 0, 0}, 1};
+    pointer[32] = (struct row){17, 5, 0, {1, 1, 0, 0}, 1};
+    pointer[33] = (struct row){17, 10, 0, {1, 1, 0, 1}, 1};
+    pointer[34] = (struct row){18, 1, 0, {0, 0, 0, 0}, 1};
+    pointer[35] = (struct row){18, 2, 0, {1, 0, 0, 0}, 1};
+    pointer[36] = (struct row){18, 5, 0, {0, 0, 1, 0}, 1};
+    pointer[37] = (struct row){18, 10, 0, {0, 0, 1, 1}, 1};
+    pointer[38] = (struct row){20, 1, 21, {0, 0, 0, 0}, 0};
+    pointer[39] = (struct row){20, 2, 22, {0, 0, 0, 0}, 0};
+    pointer[40] = (struct row){20, 5, 0, {0, 1, 0, 0}, 2};
+    pointer[41] = (struct row){20, 10, 0, {0, 1, 0, 1}, 2};
+    pointer[42] = (struct row){21, 1, 22, {0, 0, 0, 0}, 0};
+    pointer[43] = (struct row){21, 2, 0, {0, 0, 0, 0}, 2};
+    pointer[44] = (struct row){21, 5, 0, {1, 1, 0, 0}, 2};
+    pointer[45] = (struct row){21, 10, 0, {1, 1, 0, 1}, 2};
+    pointer[46] = (struct row){22, 1, 0, {0, 0, 0, 0}, 2};
+    pointer[47] = (struct row){22, 2, 0, {1, 0, 0, 0}, 2};
+    pointer[48] = (struct row){22, 5, 0, {0, 0, 1, 0}, 2};
+    pointer[49] = (struct row){22, 10, 0, {1, 1, 1, 1}, 2};
+}
+
+int main()
+{
+    // init FSM with precalculated values
+    int states_num = 50;
+    row *fsm = malloc(sizeof(row) * states_num);
+    create_table(fsm);
+
+    // start a machine
+    printf("Price of first item:   9 \n");
+    printf("Price of second item:  3 \n\n");
+
+    int cur_state = 0;
+    int input;
+
+    while (1)
+    {
+        // new iteration
+        printf("\nCurrent state: %d\n", cur_state);
+        if (cur_state == 0)
+            printf("Select item (1 or 2)? \n");
+        else
+            printf("Enter coin (1, 2, 5 or 10)? \n");
+        scanf("%d", &input);
+
+        if (cur_state == 0 && input != 1 && input != 2)
+            continue; // wrong item
+
+        if (cur_state != 0 && input != 1 && input != 2 && input != 5 && input != 10)
+            continue; // wrong coin
+
+        int i = 0;
+        while (fsm[i].state != cur_state || fsm[i].insert != input)
+            i++; // find current row in table
+
+        if (fsm[i].next_state == 0) // the machine returned to S0
+        {
+            // so we give a drink!
+            printf("Here's your item #%d! \n", fsm[i].item);
+            printf("And change: \n");
+            printf(" - 1 ruble:  %d \n", fsm[i].change[0]);
+            printf(" - 2 rubles: %d \n", fsm[i].change[1]);
+            printf(" - 4 rubles: %d \n", fsm[i].change[2]);
+            printf(" - 5 rubles: %d \n\n", fsm[i].change[3]);
+        }
+
+        // go to next state
+        printf("going to state %d \n", fsm[i].next_state);
+        cur_state = fsm[i].next_state;
+    }
+
+    return 0;
+}
+    
+\end{lstlisting}
+
+На рисунке 3 приведён граф переходов для данной реализации автомата.
+
+\image{2.png}{Граф переходов автомата с двумя товарами}{1}
+\FloatBarrier
+
+Таблица переходов построена аналогично. Последняя колонка показывает номер товара, который выдаёт автомат (Таблица 2).
+
+
+\begingroup
+\renewcommand\arraystretch{0.7}
+\begin{longtable}[c]{|c|c|c|c|c|c|c|c|}
+\caption{Таблица переходов для автомата с двумя видами товаров}
+\\
+\hline
+State & Insert & Nextstate & Change 1 & Change 2 & Change 2 2 & Change 5 & Item \\ \hline
+\endfirsthead
+%
+\endhead
+%
+0     & 1      & 10        & 0        & 0        & 0          & 0        & 0    \\ \hline
+0     & 2      & 20        & 0        & 0        & 0          & 0        & 0    \\ \hline
+        &        &           &          &          &            &          &      \\ \hline
+10    & 1      & 11        & 0        & 0        & 0          & 0        & 0    \\ \hline
+10    & 2      & 12        & 0        & 0        & 0          & 0        & 0    \\ \hline
+10    & 5      & 15        & 0        & 0        & 0          & 0        & 0    \\ \hline
+10    & 10     & 0         & 1        & 0        & 0          & 0        & 1    \\ \hline
+11    & 1      & 12        & 0        & 0        & 0          & 0        & 0    \\ \hline
+11    & 2      & 13        & 0        & 0        & 0          & 0        & 0    \\ \hline
+11    & 5      & 16        & 0        & 0        & 0          & 0        & 0    \\ \hline
+11    & 10     & 0         & 0        & 1        & 0          & 0        & 1    \\ \hline
+12    & 1      & 13        & 0        & 0        & 0          & 0        & 0    \\ \hline
+12    & 2      & 14        & 0        & 0        & 0          & 0        & 0    \\ \hline
+12    & 5      & 17        & 0        & 0        & 0          & 0        & 0    \\ \hline
+12    & 10     & 0         & 1        & 1        & 0          & 0        & 1    \\ \hline
+13    & 1      & 14        & 0        & 0        & 0          & 0        & 0    \\ \hline
+13    & 2      & 15        & 0        & 0        & 0          & 0        & 0    \\ \hline
+13    & 5      & 18        & 0        & 0        & 0          & 0        & 0    \\ \hline
+13    & 10     & 0         & 0        & 0        & 1          & 0        & 1    \\ \hline
+14    & 1      & 15        & 0        & 0        & 0          & 0        & 0    \\ \hline
+14    & 2      & 16        & 0        & 0        & 0          & 0        & 0    \\ \hline
+14    & 5      & 0         & 0        & 0        & 0          & 0        & 1    \\ \hline
+14    & 10     & 14        & 0        & 0        & 0          & 1        & 0    \\ \hline
+15    & 1      & 16        & 0        & 0        & 0          & 0        & 0    \\ \hline
+15    & 2      & 17        & 0        & 0        & 0          & 0        & 0    \\ \hline
+15    & 5      & 0         & 1        & 0        & 0          & 0        & 1    \\ \hline
+15    & 10     & 0         & 1        & 0        & 0          & 1        & 1    \\ \hline
+16    & 1      & 17        & 0        & 0        & 0          & 0        & 0    \\ \hline
+16    & 2      & 18        & 0        & 0        & 0          & 0        & 0    \\ \hline
+16    & 5      & 0         & 0        & 1        & 0          & 0        & 1    \\ \hline
+16    & 10     & 0         & 0        & 1        & 0          & 1        & 1    \\ \hline
+17    & 1      & 18        & 0        & 0        & 0          & 0        & 0    \\ \hline
+17    & 2      & 0         & 1        & 0        & 0          & 0        & 1    \\ \hline
+17    & 5      & 0         & 1        & 1        & 0          & 0        & 1    \\ \hline
+17    & 10     & 0         & 1        & 1        & 0          & 1        & 1    \\ \hline
+18    & 1      & 0         & 0        & 0        & 0          & 0        & 1    \\ \hline
+18    & 2      & 0         & 1        & 0        & 0          & 0        & 1    \\ \hline
+18    & 5      & 0         & 0        & 0        & 1          & 0        & 1    \\ \hline
+18    & 10     & 0         & 0        & 0        & 1          & 1        & 1    \\ \hline
+        &        &           &          &          &            &          &      \\ \hline
+20    & 1      & 21        & 0        & 0        & 0          & 0        & 0    \\ \hline
+20    & 2      & 22        & 0        & 0        & 0          & 0        & 0    \\ \hline
+20    & 5      & 0         & 0        & 1        & 0          & 0        & 2    \\ \hline
+20    & 10     & 0         & 0        & 1        & 0          & 1        & 2    \\ \hline
+21    & 1      & 22        & 0        & 0        & 0          & 0        & 0    \\ \hline
+21    & 2      & 0         & 0        & 0        & 0          & 0        & 2    \\ \hline
+21    & 5      & 0         & 1        & 1        & 0          & 0        & 2    \\ \hline
+21    & 10     & 0         & 1        & 1        & 0          & 1        & 2    \\ \hline
+22    & 1      & 0         & 0        & 0        & 0          & 0        & 2    \\ \hline
+22    & 2      & 0         & 1        & 0        & 0          & 0        & 2    \\ \hline
+22    & 5      & 0         & 0        & 0        & 1          & 0        & 2    \\ \hline
+22    & 10     & 0         & 1        & 1        & 1          & 1        & 2    \\ \hline
+\end{longtable}
+\endgroup
+\FloatBarrier
+
+На рисунке 4 показана работа программы.
+
+\image{4.png}{Работа конечного автомата}{0.8}
+\FloatBarrier
+
+\subsection{Автомат Мура}
+Для данного автомата продемонстрируем, как будет выглядеть граф Мура. Особенность автомата Мура заключается в том, что выход автомата определяется только текущим состоянием. Это значит, что информацию о внесённых деньгах приходится хранить в текущих состояниях. Граф представлен на рисунке 5.
+
+\image{5.png}{Автомат Мура}{1}
+\FloatBarrier
+
+\section{Выводы о проделанной работе}
+В рамках данной работы я познакомился с архитектурой программ на основе конечных автоматов и принципом реализации алгоритма устройства на основе конечных автоматов. Разобрал различия между автоматами Мили и Мура. Реализовал логику работы устройства «Вендинговый автомат» на языке С.
