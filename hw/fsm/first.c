@@ -98,5 +98,6 @@ int main()
         cur_state = fsm[i].next_state;
     }
 
+    free(fsm);
     return 0;
 }

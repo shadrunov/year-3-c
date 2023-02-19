@@ -119,6 +119,7 @@ int main()
         printf("going to state %d \n", fsm[i].next_state);
         cur_state = fsm[i].next_state;
     }
-
+    
+    free(fsm);
     return 0;
 }
